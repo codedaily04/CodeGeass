@@ -1,13 +1,14 @@
 const Problem = require("../../models/problem");
 const { generateHint } = require("../../services/aiHintService");
-
+const { markHintGenerated } = require("../../middleware/hintProgression");
 const SUPPORTED_LANGUAGES = ['cpp', 'py'];
 const MAX_CODE_LENGTH = 20000;
+const SUPPORTED_HINT_LEVELS = [1, 2, 3];
 
 const getHintController = async (req, res) => {
     try {
         const { slug } = req.params;
-        const { code, language } = req.body;
+        const { code, language, hintLevel } = req.body;
 
         // Validate code field
         if (code === undefined || code === null) {
@@ -48,6 +49,13 @@ const getHintController = async (req, res) => {
             });
         }
 
+        // Validate hint level
+        if (!SUPPORTED_HINT_LEVELS.includes(hintLevel)) {
+            return res.status(400).json({
+                message: "Invalid hint level. Allowed levels: 1, 2, 3"
+            });
+        }
+
         // Fetch problem - select ONLY safe fields (never input/output)
         const problem = await Problem.findOne({ slug })
             .select('title difficulty description');
@@ -62,8 +70,10 @@ const getHintController = async (req, res) => {
         const hint = await generateHint(
             problem,
             code,
-            language
+            language,
+            hintLevel
         );
+        markHintGenerated(req.hintProgressKey, hintLevel);
 
         return res.status(200).json({
             hint

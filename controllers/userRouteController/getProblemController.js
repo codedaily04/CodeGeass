@@ -3,7 +3,11 @@ const Problem = require("../../models/problem");
 const getProblemController = async (req, res) => {
     try {
         let slug = req.params.slug;
-        const problem = await Problem.findOne({slug});
+        
+        // Exclude input and output fields from public API
+        // These are test cases and should only be accessible to the judge
+        const problem = await Problem.findOne({slug}).select('-input -output');
+        
         if(!problem) {
             return res.status(400).json({message: "No Problem Found"});
         }
