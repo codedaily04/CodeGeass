@@ -17,7 +17,7 @@ const runCodeRoute = require("./routes/userRoutes/runCodeRoute");
 const checkProblemRoute = require("./routes/userRoutes/checkProblemRoute");
 const leaderBoardRoute = require("./routes/userRoutes/leaderBoardRoute");
 const getHintRoute = require("./routes/userRoutes/getHintRoute");
-
+const getCodeReviewRoute = require("./routes/userRoutes/getCodeReviewRoute");
 // Import admin routes
 const addProblemRoute = require("./routes/adminRoutes/addProblemRoute");
 const editProblemRoute = require("./routes/adminRoutes/editProblemRoute");
@@ -47,7 +47,7 @@ app.use("/api/", runCodeRoute);
 app.use("/api/", checkProblemRoute);
 app.use("/api/", leaderBoardRoute);
 app.use("/api/", getHintRoute);
-
+app.use("/api/", getCodeReviewRoute);
 // Use admin routes
 app.use("/admin/", addProblemRoute);
 app.use("/admin/", editProblemRoute);
