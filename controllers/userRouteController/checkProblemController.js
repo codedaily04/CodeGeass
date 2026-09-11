@@ -5,6 +5,8 @@ const Problem = require("../../models/problem");
 const executePy = require("../../judge/executePy");
 const User = require("../../models/user");
 
+const MAX_CODE_SIZE = 50000; // 50KB max code size
+
 const checkProblemController = async (req, res) => {
     try {
         let slug = req.params.slug;
@@ -17,6 +19,14 @@ const checkProblemController = async (req, res) => {
             res.status(400).json({ "message": "Empty Code Body" });
             return;
         }
+        
+        // Validate code size
+        if (code.length > MAX_CODE_SIZE) {
+            return res.status(400).json({ 
+                "message": `Code size exceeds maximum allowed (${MAX_CODE_SIZE} characters)` 
+            });
+        }
+        
         const filePath = await generateFile(lang, code);
         const inputPath = `${path.join(__dirname, '../../inputs')}/${slug}.txt`;
         let userOutput;

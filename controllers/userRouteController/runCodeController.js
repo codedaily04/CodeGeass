@@ -2,6 +2,7 @@ const executeCpp = require("../../compiler/executeCpp");
 const executePy = require("../../compiler/executePy");
 const generateFile = require("../../compiler/generateFile");
 
+const MAX_CODE_SIZE = 50000; // 50KB max code size
 
 const runCodeController = async (req, res) => {
     try {
@@ -10,6 +11,13 @@ const runCodeController = async (req, res) => {
         if (!code) {
             res.status(400).json({ "message": "Empty Code Body" });
             return;
+        }
+
+        // Validate code size
+        if (code.length > MAX_CODE_SIZE) {
+            return res.status(400).json({ 
+                "message": `Code size exceeds maximum allowed (${MAX_CODE_SIZE} characters)` 
+            });
         }
 
         const filePath = await generateFile(lang, code);

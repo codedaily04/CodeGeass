@@ -32,10 +32,10 @@ app.use(cors({
 // Connect to database
 require('./db/conn');
 
-// Parse request bodies as JSON
-app.use(express.json());
+// Parse request bodies as JSON with size limit (1MB for code submissions)
+app.use(express.json({ limit: '1mb' }));
 // Parse URL-encoded request bodies
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false, limit: '1mb' }));
 
 // Use user routes
 app.use("/api/", getUserRoute);
